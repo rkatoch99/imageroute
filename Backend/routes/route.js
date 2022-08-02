@@ -54,6 +54,15 @@ routes.post("/uploads", uploadimage.single('testImage'), (req, res) => {
     });
 });
 
+routes.post('/resetpassword',AuthController.Resetpassword)
+
+routes.post("/user/forgot-password", AuthController.Token);
+
+// routes.post(
+//   "/user/verify-reset-password/:password_reset_token",
+//   AuthController.Verify
+// );
+
 //////////////-----------------------Post Routes end here---------------------//////////////
 
 /////////---------------------------Put Routes start here-------------------------------//////
@@ -64,11 +73,6 @@ routes.put("/user/delete", verifyToken, Data.DeleteData);
 
 routes.delete("/user/address/:id", AuthController.Delete);
 
-routes.post("/user/forgot-password", AuthController.Token);
 
-routes.post(
-  "/user/verify-reset-password/:password_reset_token",
-  AuthController.Verify
-);
 
 module.exports = routes;
