@@ -221,6 +221,33 @@ exports.Token = async (req, res, next) => {
         .status(200)
         .json({ message: `password rest successfully ${Checkemail}` });
     }
+      
+
+      //-- -----------------------------send the mail if the tokken is verify----------------------------//
+      const testAccount = await nodemailer.createTestAccount();
+      let transporter = nodemailer.createTransport({
+        host: "smtp.ethereal.email",
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+          user: "jaren59@ethereal.email", // generated ethereal user
+          pass: "yvH7mGBuFNnzndY2qQ", // generated ethereal password
+        },
+      });
+
+      const info = await transporter.sendMail({
+        from: '"Fred Foo 👻" <rahul_katoch@excellencetechnologies.in>', // sender address
+        to: "sunnyyadav988@gmail.com", // list of receivers
+        subject: "Password Reset Link ", // Subject line
+        text: "Please Reset your Password here....", // plain text body
+        html: `<a href='http://localhost:3000/newpassword/${tokken}'>Click to reset your password</a>`, // html body
+      });
+
+      console.log("Message sent: %s", info.messageId);
+      // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+      console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+    
   } catch (err) {
     console.log(err);
   }
@@ -228,14 +255,78 @@ exports.Token = async (req, res, next) => {
 
 //----------------------------------End Password reset generation Token----------------------//
 
-exports.Verify = async (req, res) => {
-  
+// exports.Verify = async (req, res) => {
+//   try {
+//     const token = req.params.password_reset_token;
+//     const findtoken = await Registration.findOne({ resetLink: token });
+//     // const token = findtoken.resetLink
+//     console.log("find tokken", findtoken);
+
+//     if (findtoken.resetLink==token) {
+//       console.log(req.params.password_reset_token);
+//       if (token) {
+//         await jwt.verify(token, process.env.Resetpassword, (err, success) => {
+//           if (err) {
+//             return res.status(400).json({ error: "Tokken was not verify..." });
+//           } else {
+//             return res
+//               .status(200)
+//               .json({ message: "Tokken verify.....", success });
+//           }
+//         });
+//       }
+
+//       //-- -----------------------------send the mail if the tokken is verify----------------------------//
+//       const testAccount = await nodemailer.createTestAccount();
+//       let transporter = nodemailer.createTransport({
+//         host: "smtp.ethereal.email",
+//         port: 587,
+//         secure: false, // true for 465, false for other ports
+//         auth: {
+//           user: "jaren59@ethereal.email", // generated ethereal user
+//           pass: "yvH7mGBuFNnzndY2qQ", // generated ethereal password
+//         },
+//       });
+
+//       const info = await transporter.sendMail({
+//         from: '"Fred Foo 👻" <rahul_katoch@excellencetechnologies.in>', // sender address
+//         to: "sunnyyadav988@gmail.com", // list of receivers
+//         subject: "Password Reset Link ", // Subject line
+//         text: "Please Reset your Password here....", // plain text body
+//         html: `<form action="/action_page.php">
+//     <label for="fname">New Password</label><br>
+//     <input type="password" id="newpassword"  value=${req.body.password}"><br>
+//     <label for="confirmpassword">Confirm Password:</label><br>
+//     <input type="password" id="confirmpassword" value=${req.body.Confirmpassword}><br><br>
+
+//     <input type="submit" value="Submit">
+//   </form> `, // html body
+//       });
+
+//       console.log("Message sent: %s", info.messageId);
+//       // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+//       console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+
+//     } else {
+//       res.status(400).json({
+//         error:
+//           "You can't restset the password your password link was expire please generate the new one.....",
+//       });
+//       console.log(
+//         "You can't restset the password your password link was expire please generate the new one....."
+//       );
+//     }
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
+
+//-----------------------------------Rest your passsword by the help of frontend----------------------//
+
+exports.Resetpassword = async (req, res) => {
   try {
     const token = req.params.password_reset_token;
-    const findtoken = await Registration.findOne({resetLink:token})
-    if(findtoken.resetLink==token){
-
-    // console.log(req.params.password_reset_token);
     if (token) {
       await jwt.verify(token, process.env.Resetpassword, (err, success) => {
         if (err) {
@@ -247,41 +338,20 @@ exports.Verify = async (req, res) => {
         }
       });
     }
-//-- -----------------------------send the mail if the tokken is verify----------------------------//
-  const testAccount = await nodemailer.createTestAccount();
-  let transporter = nodemailer.createTransport({
-    host: "smtp.ethereal.email",
-    port: 587,
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: 'jaren59@ethereal.email', // generated ethereal user
-      pass: 'yvH7mGBuFNnzndY2qQ', // generated ethereal password
-    },
-  });
-
-  const  info = await transporter.sendMail({
-    from: '"Fred Foo 👻" <rahul_katoch@excellencetechnologies.in>', // sender address
-    to: "sunnyyadav988@gmail.com", // list of receivers
-    subject: "Password Reset Link ", // Subject line
-    text: "Please Reset your Password here....", // plain text body
-    html: `<form action="/action_page.php">
-    <label for="fname">New Password</label><br>
-    <input type="password" id="newpassword"  value=${req.body.password}"><br>
-    <label for="confirmpassword">Confirm Password:</label><br>
-    <input type="password" id="confirmpassword" value=${req.body.Confirmpassword}><br><br>
-    <input type="submit" value="Submit">
-  </form> `, // html body
-  });
-
-  console.log("Message sent: %s", info.messageId);
-  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-
-  console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info))
-
-  }else{
-    res.status(400).json({error:"You can't restset the password your password link was expire please generate the new one....."})
-    console.log("You can't restset the password your password link was expire please generate the new one.....")
-  }
+    const findtoken = await Registration.findOne({ resetLink: token });
+    console.log("reset password...", findtoken.resetLink);
+    const password = req.body.password;
+    const Confirmpassword = req.body.Confirmpassword;
+    if (password === Confirmpassword) {
+      const passwordHash = await bcrypt.hash(password, 10);
+      const reg = await Registration.updateOne({ password: passwordHash });
+      const save = await reg.save();
+      if (save) {
+        res.status(201).json({ message: "Password Change successfully..." });
+      }
+    } else {
+      console.log("password incorrect..");
+    }
   } catch (err) {
     console.log(err);
   }
