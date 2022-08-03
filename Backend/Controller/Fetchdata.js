@@ -147,7 +147,7 @@ exports.Fetching = async (req,res)=>{
 
 exports.Snap = async (req,res)=>{
 
-  const url = "https://www.snapdeal.com/products/mens-tshirts-polos?sort=plrty&page=1";
+  const url = "https://www.snapdeal.com/products/mens-tshirts-polos?sort=plrty&page=2";
 
   try {
 
@@ -157,12 +157,12 @@ exports.Snap = async (req,res)=>{
     // Load HTML we fetched in the previous line
     const $ = cheerio.load(data);
     // Select all the list items in plainlist class
-    const listItems = $('.product-tuple-image');
+    const listItems = $('.product-image ');
     // Stores data for all countries
     const countries = [];
     // Use .each method to loop through the li we selected
     listItems.each((idx, el) => {
-       //console.log(el)
+       console.log(el)
       // Object holding data for each country/jurisdiction
       const country = { name: "", image: "" };
       // Select the text content of a and span elements
@@ -170,7 +170,8 @@ exports.Snap = async (req,res)=>{
       country.image= $(el).attr().srcset;
 
       country.name = $(el).attr().title;
-      console.log(country.title)
+      console.log(country.name)
+      console.log(country.image)
       
       // Populate countries array with country data
       countries.push(country);
@@ -179,6 +180,8 @@ exports.Snap = async (req,res)=>{
     const products = await Snapdeel.find({});
 
     res.json(products);
+    const Data =  await Snapdeel.insertMany(countries)
+    console.log("data",Data)
     
   } catch (err) {
     console.error(err);
