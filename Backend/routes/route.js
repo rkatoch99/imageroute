@@ -12,12 +12,17 @@ const upload = require("../Midleware/FileStorageEngine");
 const uploadimage = require("../Midleware/Uploadimage");
 
 const Data = require("../Controller/Fetchdata");
-const uploadImage = require('../MongoDb/models/ImageModel')
+const uploadImage = require("../MongoDb/models/ImageModel");
 
-////////-----------------Get Routes---------------------------------------/////////////////
+//-----------------------------------------------------------------------------------------------//
+
+////////-----------------------------Get Routes---------------------------------------//////////////
 
 routes.get("/Dashboard", verifyToken, Data.FetchData);
 routes.get("/user/list/:page", Data.PageNo);
+
+routes.get("/fetch/flipkart/mobile", Data.Fetching);
+routes.get("/fetch/snapdeal/t-shirt", Data.Snap);
 
 ////-------------------------Get Routes end here----------------------------------------///
 
@@ -37,7 +42,7 @@ routes.post("/user/profile-image", upload.single("image"), (req, res) => {
   // res.send("single file uploade successfully..")
 });
 
-routes.post("/uploads", uploadimage.single('testImage'), (req, res) => {
+routes.post("/uploads", uploadimage.single("testImage"), (req, res) => {
   const ImageUpload = new uploadImage({
     name: req.body.name,
     image: {
@@ -54,7 +59,7 @@ routes.post("/uploads", uploadimage.single('testImage'), (req, res) => {
     });
 });
 
-routes.post('/resetpassword',AuthController.Resetpassword)
+routes.post("/resetpassword", AuthController.Resetpassword);
 
 routes.post("/user/forgot-password", AuthController.Token);
 
@@ -72,7 +77,5 @@ routes.put("/user/delete", verifyToken, Data.DeleteData);
 ///////////////------------------------Put Routes end here---------------------------//////////
 
 routes.delete("/user/address/:id", AuthController.Delete);
-
-
 
 module.exports = routes;

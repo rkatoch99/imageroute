@@ -6,13 +6,12 @@ const ImageModel = mongoose.Schema({
         type:String
     },
     image:{
-        data:Buffer,
-        contentType:String,
+        type:String
     }
 })
 
 
-const Imagemodel= new mongoose.model('image',ImageModel)
+const Imagemodel = new mongoose.model('image',ImageModel)
 
 
 module.exports = Imagemodel
